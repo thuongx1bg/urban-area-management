@@ -1,0 +1,27 @@
+- quản lý ng dùng
+
+- quản lý qr
+
+- quản lý nhóm người dùng
+
+- quản lý tòa nhà
+
+1 Dánh sách Module
+
+2. Phân quyền
+
+- Tạo 1 nhóm người dùng => phần quyền cho nhóm
+- Thêm user cho nhóm => user đó sẽ có quyền trong nhóm đó
+- Các quyền:
+01 qr
+Sửa : ai thêm thì sửa
+Xóa: ai thêm thì xóa
+Xem
+Thêm
+
+02 Nhóm ng dùng
++ Xem danh sách nhóm
++ Thêm nhóm
++ Sửa nhóm
++ Xóa Nhóm
++ Phân quyền
