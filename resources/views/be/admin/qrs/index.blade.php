@@ -1,4 +1,9 @@
 @extends('be.layouts.admin')
+
+
+@section('title')
+    <title>QrCode</title>
+@endsection
 @section('css')
     <link href="https://cdn.datatables.net/1.11.4/css/dataTables.bootstrap5.min.css" rel="stylesheet">
 @endsection
@@ -19,8 +24,8 @@
         @endif
         <!-- Content Row -->
         <div class="card shadow mb-4">
-            <div class="card-header py-3">
-                <h6 class="m-0 font-weight-bold text-primary">List QrCode</h6>
+            <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                    <h6 class="m-0 font-weight-bold text-primary">List QrCode</h6>
             </div>
             <div class="card-body">
                 <div class="table-responsive">

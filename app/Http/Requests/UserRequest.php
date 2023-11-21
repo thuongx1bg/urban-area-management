@@ -36,6 +36,10 @@ class UserRequest extends FormRequest
             'email' => 'required | string | email | max:255 | '.$uniqueRuleEmail,
             'username' => 'required | string |max:255 | '.$uniqueRuleUserName,
             'password' => ['string', 'min:8', 'confirmed'],
+            'cmt' => 'string | max:255 | nullable ',
+            'phone' => 'string | max:255 | nullable',
+            'status' => 'required'
+
         ];
     }
 }

@@ -11,6 +11,7 @@ use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
 class RegisterController extends Controller
@@ -60,7 +61,7 @@ class RegisterController extends Controller
     {
         return Validator::make($data, [
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['string', 'email', 'max:255', 'unique:users'],
+//            'email' => ['string', 'email', 'max:255', 'unique:users'],
             'cmt' => ['string', 'max:255', 'unique:users','unique:users'],
             'username' => ['required', 'string', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
@@ -79,7 +80,7 @@ class RegisterController extends Controller
         return User::create([
             'name' => $data['name'],
             'username' => $data['username'],
-            'email' => $data['email'],
+//            'email' => $data['email'],
             'cmt'=>$data['cmt'],
             'phone'=>$data['phone'],
             'status'=> 0,
@@ -104,4 +105,6 @@ class RegisterController extends Controller
             ? new JsonResponse([], 201)
             : redirect($this->redirectPath());
     }
+
+
 }

@@ -23,5 +23,8 @@ class DatabaseSeeder extends Seeder
              'building_id'=> 1
 
          ]);
+
+         $this->call([RoleSeeder::class, BuildingSeeder::class]);
+
     }
 }

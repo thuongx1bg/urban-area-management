@@ -1,4 +1,7 @@
 @extends('be.layouts.admin')
+@section('title')
+    <title>Users</title>
+@endsection
 @section('css')
     <link href="https://cdn.datatables.net/1.11.4/css/dataTables.bootstrap5.min.css" rel="stylesheet">
 @endsection
@@ -6,7 +9,7 @@
     <div class="container-fluid">
 
         <!-- Page Heading -->
-        @include('be.partials.content-header',['title'=>'Buildings','route'=>route('user.create')])
+        @include('be.partials.content-header',['title'=>'Users','route'=>route('user.create')])
         @if (session('error'))
             <div class="alert alert-danger" role="alert">
                 {{ session('error') }}
@@ -21,7 +24,7 @@
         <!-- Content Row -->
         <div class="card shadow mb-4">
             <div class="card-header py-3">
-                <h6 class="m-0 font-weight-bold text-primary">List Buildings</h6>
+                <h6 class="m-0 font-weight-bold text-primary">List Users</h6>
             </div>
             <div class="card-body">
                 <div class="table-responsive">

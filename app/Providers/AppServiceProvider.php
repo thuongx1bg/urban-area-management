@@ -6,6 +6,8 @@ use App\Repositories\Building\BuildingRepository;
 use App\Repositories\Building\BuildingRepositoryInterface;
 use App\Repositories\QrCode\QrCodeRepository;
 use App\Repositories\QrCode\QrCodeRepositoryInterface;
+use App\Repositories\Role\RoleRepository;
+use App\Repositories\Role\RoleRepositoryInterface;
 use App\Repositories\User\UserRepositoryInterface;
 use App\Repositories\User\UserRepository;
 use Illuminate\Support\ServiceProvider;
@@ -28,6 +30,10 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton(
             QrCodeRepositoryInterface::class,
             QrCodeRepository::class
+        );
+        $this->app->singleton(
+            RoleRepositoryInterface::class,
+            RoleRepository::class
         );
     }
 

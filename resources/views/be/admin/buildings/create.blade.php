@@ -1,4 +1,7 @@
 @extends('be.layouts.admin')
+@section('title')
+    <title>Buildings</title>
+@endsection
 @section('content')
     <div class="container-fluid">
 

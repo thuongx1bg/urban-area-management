@@ -6,6 +6,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Auth;
 use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
@@ -25,7 +26,7 @@ class User extends Authenticatable
         'phone',
         'status',
         'cmt',
-        'public_key', 'private_key'
+        'public_key', 'private_key',
     ];
 
     /**
@@ -51,5 +52,25 @@ class User extends Authenticatable
     public function building()
     {
         return $this->belongsTo(Building::class);
+    }
+
+    public function roles()
+    {
+        return $this->belongsToMany(Role::class, 'user_role','user_id','role_id');
+    }
+
+    public function checkPermissionAccess($checkPermission)
+    {
+        $roles = Auth::user()->roles;
+        foreach ($roles as $role) {
+            $permission = $role->permissions;
+            if($permission->contains('key_code',$checkPermission)){
+                return true;
+            }
+        }
+        return false;
+        // b1 laasy cac quyen user dang login
+
+        // b2 so sanh gia tri dua vao router hien tai cos ton tai trong cac quyfn lay ko
     }
 }

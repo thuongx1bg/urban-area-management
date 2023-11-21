@@ -1,4 +1,7 @@
 @extends('be.layouts.admin')
+@section('title')
+    <title>Buildings</title>
+@endsection
 @section('css')
     <link href="https://cdn.datatables.net/1.11.4/css/dataTables.bootstrap5.min.css" rel="stylesheet">
 @endsection

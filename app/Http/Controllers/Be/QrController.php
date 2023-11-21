@@ -33,64 +33,43 @@ class QrController extends Controller
             $data = $this->qrRepo->getAll();
 
             return DataTables::of($data)
-
                 ->addIndexColumn()
-                ->addColumn('link', function($row){
-                    return '<a target="__blank" href="'. route('qr.infor',['qr_id'=>$row->id]) .'" class="btn btn-warning btn-icon-split btn-lg " style="padding: 0px 7px">Link</a>';
+                ->addColumn('link', function ($row) {
+                    return '<a target="__blank" href="' . route('qr.infor', ['qr_id' => $row->id]) . '" class="btn btn-warning btn-icon-split btn-lg " style="padding: 0px 7px">Link</a>';
                 })
-                ->addColumn('action', function($row){
-                    return '<a href="'. route('qr.edit',['id'=>$row->id]) .'" class="edit btn btn-info btn-circle"><i class="fas fa-info-circle"></i></a>
+                ->addColumn('action', function ($row) {
+                    return '<a href="' . route('qr.edit', ['id' => $row->id]) . '" class="edit btn btn-info btn-circle"><i class="fas fa-info-circle"></i></a>
                             <a href="' . route('qr.delete', ['id' => $row->id]) . '" class="action_delete delete btn btn-danger btn-circle"><i class="fas fa-trash"></i></a>';
                 })
-
-                ->rawColumns(['action','link'])
-
+                ->rawColumns(['action', 'link'])
                 ->make(true);
 
         }
 
 
-
         return view('be.admin.qrs.index');
     }
 
-    public function index2()
-    {
-        $username = Auth::user()->username;
-        $pathToPrivateKey = storage_path('app/keys/'.$username.'/private.txt');
-        $si = 'my message12';
-        $signature = PrivateKey::fromFile($pathToPrivateKey)->sign($si);
-
-
-        $qr = QrCode::create([
-            'user_id'=>Auth::user()->id,
-            'ds'=>$signature
-        ]);
-        $idQr = $qr->id;
-
-        return view('be.admin.qrs.index',compact('si','username','idQr'));
-
-    }
 
     public function check(Request $request)
     {
 
-        $qr =  $this->qrRepo->find($request->qrId);
+        $qr = $this->qrRepo->find($request->qrId);
 
         $username = $this->userRepo->find($qr->user_id)->username;
 
-        $publicKey = PublicKey::fromFile(storage_path('app/keys/'.$username.'/public.txt'));
+        $publicKey = PublicKey::fromFile(storage_path('keys/' . $username . '/public.txt'));
 
-        $si = ('name:'.$request->name.';note:'.$request->note);
+        $si = ('name:' . $request->name . ';note:' . $request->note);
 
         $check = false;
-        if ($publicKey->verify( $si,  $qr->ds)){
+        if ($publicKey->verify($si, $qr->ds)) {
             $check = true;
         };
 
         dd($check);
 
-        return view('be.admin.qrs.result',compact('check'));
+        return view('be.admin.qrs.result', compact('check'));
 
     }
 
@@ -107,25 +86,24 @@ class QrController extends Controller
 
     public function store(Request $request)
     {
-        try{
-            $username = Auth::user()->username;
-            $pathToPrivateKey = storage_path('app/keys/'.$username.'/private.txt');
-            $si = ('name:'.$request->name.';note:'.$request->note);
-            // chu ky so
-            $ds = PrivateKey::fromFile($pathToPrivateKey)->sign($si);
+        try {
 
-            $qr = $this->qrRepo->create([
-                'note'=>$request->note,
-                'name' => $request->name,
-                'ds' => $ds,
-                'user_id' => Auth::user()->id,
-                'si' => $si
-            ]);
+            $note = $request->note;
+            $name = $request->name;
+            $user = Auth::user();
+            $dataQr = [
+                'name' => $name,
+                'note' => $note,
+                'user_id' => $user->id,
+                'username' => $user->username,
+                'own_id' => 1
+            ];
+            $this->qrRepo->createOrUpdateQrCode($dataQr);
 
-            return redirect()->route('qr.index')->with('success', "Thêm qr thành công");
-        }catch(Exception $exception){
+            return redirect()->route('qr.index')->with('success', config('messages.success'));
+        } catch (Exception $exception) {
             Log::error('Message:' . $exception->getMessage() . 'Line' . $exception->getLine());
-            return redirect()->route('qr.index')->with('error', "Thêm qr thất bại");
+            return redirect()->route('qr.index')->with('error', config('messages.error'));
         }
 
     }
@@ -134,7 +112,7 @@ class QrController extends Controller
     {
         $qr = $this->qrRepo->find($id);
 
-        return view('be.admin.qrs.edit',compact('qr'));
+        return view('be.admin.qrs.edit', compact('qr'));
     }
 
     public function infor($id)
@@ -142,32 +120,28 @@ class QrController extends Controller
         $qr = $this->qrRepo->find($id);
 
         $user = $this->userRepo->find($qr->user_id);
-        return view('be.admin.qrs.infor',compact('qr','user'));
+        return view('be.admin.qrs.infor', compact('qr', 'user'));
     }
 
-    public function update(Request $request,$id)
+    public function update(Request $request, $id)
     {
-        try{
-            $username = Auth::user()->username;
-            $pathToPrivateKey = storage_path('app/keys/'.$username.'/private.txt');
+        try {
+            $note = $request->note;
+            $name = $request->name;
+            $user = $this->userRepo->find($this->qrRepo->find($id)->user_id);
+            $dataQr = [
+                'name' => $name,
+                'note' => $note,
+                'user_id' => $user->id,
+                'username' => $user->username,
+                'own_id' => 1
+            ];
+            $this->qrRepo->createOrUpdateQrCode($dataQr, $id);
 
-
-            $si = ('name:'.$request->name.';note:'.$request->note) ;
-            // chu ky so
-            $ds = PrivateKey::fromFile($pathToPrivateKey)->sign($si);
-
-            $qr = $this->qrRepo->update($id,[
-                'note'=>$request->note,
-                'name' => $request->name,
-                'ds' => $ds,
-                'user_id' => Auth::user()->id,
-                'si' =>$si
-            ]);
-
-            return redirect()->route('qr.index')->with('success', "Suar qr thành công");
-        }catch(Exception $exception){
+            return redirect()->route('qr.index')->with('success', config('messages.success'));
+        } catch (Exception $exception) {
             Log::error('Message:' . $exception->getMessage() . 'Line' . $exception->getLine());
-            return redirect()->route('qr.index')->with('error', "Sua qr thất bại");
+            return redirect()->route('qr.index')->with('error', config('messages.error'));
         }
     }
 

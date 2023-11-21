@@ -1,9 +1,12 @@
 @extends('be.layouts.admin')
+@section('title')
+    <title>QrCode</title>
+@endsection
 @section('content')
     <div class="container-fluid">
 
         <!-- Page Heading -->
-        @include('be.partials.content-header',['title'=>'Buildings','route'=>route('qr.create'),'action'=>'/ create'])
+        @include('be.partials.content-header',['title'=>'QrCodes','route'=>route('qr.create'),'action'=>'/ create'])
 
         <!-- Content Row -->
         <div class="card shadow mb-4">

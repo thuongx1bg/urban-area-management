@@ -1,4 +1,17 @@
 @extends('be.layouts.admin')
+@section('title')
+    <title>Users</title>
+@endsection
+@section('css')
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <style>
+        .select2-selection{
+            height: calc(1.5em + 0.75rem + 2px);
+            border: 1px solid #d1d3e2 !important;
+        }
+
+    </style>
+@endsection
 @section('content')
     <div class="container-fluid">
 
@@ -11,7 +24,7 @@
                 <h6 class="m-0 font-weight-bold text-primary">Form</h6>
             </div>
             <div class="card-body">
-                <form method="post" action="{{route('user.update',['id'=> $user->id])}}">
+                <form enctype="multipart/form-data" method="post" action="{{route('user.update',['id'=> $user->id])}}">
                     @csrf
                     <div class="form-row">
                         <div class="form-group col-md-6">
@@ -64,13 +77,6 @@
                     </div>
                     <div class="form-row">
                         <div class="form-group col-md-6">
-                            <label for="exampleFormControlSelect1">Reset Password: <span class="btn btn-info btn-icon-split">123456789</span> </label>
-                            <select name="reset_password" class="form-control" id="exampleFormControlSelect1">
-                                <option value="1">Yes</option>
-                                <option value="0" selected>No</option>
-                            </select>
-                        </div>
-                        <div class="form-group col-md-6">
                             <label for="exampleFormControlSelect1">Status <span class="text-danger">*</span></label>
                             <select name="status" class="form-control" id="exampleFormControlSelect1">
                                 <option @if($user->status == 1) selected @endif value="1">Accept</option>
@@ -78,6 +84,27 @@
                                 <option @if($user->status == -1) selected @endif value="-1" >Reject</option>
                             </select>
                         </div>
+                        <div class="form-group col-md-6">
+                            <label for="exampleFormControlSelect1">Roles <span class="text-danger">*</span></label>
+                            <select multiple name="role_id[]" class="form-control select-2" id="exampleFormControlSelect1">
+                                @foreach($roles as $role)
+                                    <option
+                                        {{$roleOfUser->contains('id',$role->id)?'selected':''}}
+                                        value="{{$role->id}}">{{$role->name}}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label for="exampleFormControlSelect1">Reset Password: <span class="btn btn-info btn-icon-split">123456789</span> </label>
+                            <select name="reset_password" class="form-control" id="exampleFormControlSelect1">
+                                <option value="1">Yes</option>
+                                <option value="0" selected>No</option>
+                            </select>
+                        </div>
+
                     </div>
 
                     <button type="submit" class="btn btn-success">Save</button>
@@ -87,4 +114,12 @@
 
     </div>
 
+@endsection
+@section('js')
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script>
+        $('.select-2').select2({
+            'placeholder':'Chọn vai trò'
+        })
+    </script>
 @endsection

@@ -1,72 +1,130 @@
 @extends('be.layouts.admin')
+@section('title')
+    <title>Users</title>
+@endsection
 @section('content')
     <div class="container-fluid">
 
         <!-- Page Heading -->
         @include('be.partials.content-header',['title'=>'Users', 'action'=>'/ profile'])
+{{--        <section style="background-color: #eee;">--}}
+                <div class="row">
+                    <div class="col-lg-5" >
+                        <div class="card mb-4" style="padding-bottom: 28px">
+                            <div class="card-body text-center">
+                                <img src="https://static-images.vnncdn.net/files/publish/2022/9/3/bien-vo-cuc-thai-binh-346.jpeg" alt="avatar"
+                                     class="rounded-circle img-fluid" style="width: 150px;">
+                                <h5 class="my-3">{{$user->name}}</h5>
+                                <p class="text-muted mb-1">{{$user->email}}</p>
+                                <p class="text-muted mb-4">{{ $user->building->address }}</p>
+                                <div style="margin-bottom: 30px">{!! QrCode::generate(route('qr.infor',['qr_id'=> $qrId])); !!}</div>
+                                <div class="d-flex justify-content-center mb-2">
+                                    <a style="margin-right: 5px" href="{{route('user.edit',['id'=>$user->id])}}" type="button" class="btn btn-primary">Edit Profile</a>
+                                    <a href="{{route('user.change_password',['id'=>$user->id])}}" type="button" class="btn btn-outline-primary ms-1">Change Password</a>
+                                </div>
 
-        <!-- Content Row -->
-        <div class="card shadow mb-4">
-            <div class="card-header py-3">
-                <h6 class="m-0 font-weight-bold text-primary">Detail</h6>
-            </div>
-            <div class="card-body">
-                <form method="post" action="{{route('user.update',['id'=> $user->id])}}">
-                    <div class="form-row" >
-                        @csrf
-                        <div class="form-group col-md-6">
-                            <label for="inputEmail4">Name <span class="text-danger">*</span></label>
-                            <input  disabled value="{{old('name') ?? $user->name}}" name="name" type="text" class="disabled form-control @error('name') is-invalid @enderror " id="inputEmail4" placeholder="Name">
-                            @error('name')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-                        <div class="form-group col-md-6">
-                            <label for="inputAddress">UserName <span class="text-danger">*</span></label>
-                            <input disabled value="{{old('address') ?? $user->username}}" name="username" type="text" class="disabled form-control @error('username') is-invalid @enderror" id="inputAddress" placeholder="Username ">
-                            @error('username')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
+                            </div>
                         </div>
                     </div>
-                    <div class="form-row">
-                        <div class="form-group col-md-6">
-                            <label for="inputEmail4">Email <span class="text-danger">*</span></label>
-                            <input disabled value="{{old('email') ?? $user->email}}" name="email" type="text" class="disabled form-control @error('email') is-invalid @enderror " id="inputEmail4" placeholder="Email">
-                            @error('email')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-                        <div class="form-group col-md-6">
-                            <label for="exampleFormControlSelect1">Building <span class="text-danger">*</span></label>
-                            <select disabled name="building_id" class="disabled form-control" id="exampleFormControlSelect1">
-                                @foreach($buildings as $building)
-                                    <option @if($building->id == $user->building->id) selected @endif value="{{$building->id}}">{{$building->name}}</option>
-                                @endforeach
-                            </select>
+                    <div class="col-lg-7">
+                        <div class="card mb-4">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-sm-3">
+                                        <p class="mb-0">Full Name</p>
+                                    </div>
+                                    <div class="col-sm-9">
+                                        <p class="text-muted mb-0">{{$user->name}}</p>
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="row">
+                                    <div class="col-sm-3">
+                                        <p class="mb-0">Email</p>
+                                    </div>
+                                    <div class="col-sm-9">
+                                        <p class="text-muted mb-0">{{$user->email}}</p>
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="row">
+                                    <div class="col-sm-3">
+                                        <p class="mb-0">Phone</p>
+                                    </div>
+                                    <div class="col-sm-9">
+                                        <p class="text-muted mb-0">{{$user->phone}}</p>
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="row">
+                                    <div class="col-sm-3">
+                                        <p class="mb-0">Id Card</p>
+                                    </div>
+                                    <div class="col-sm-9">
+                                        <p class="text-muted mb-0">{{$user->cmt}}</p>
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="row">
+                                    <div class="col-sm-3">
+                                        <p class="mb-0">Username</p>
+                                    </div>
+                                    <div class="col-sm-9">
+                                        <p class="text-muted mb-0">{{$user->username}}</p>
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="row">
+                                    <div class="col-sm-3">
+                                        <p class="mb-0">Roles</p>
+                                    </div>
+                                    <div class="col-sm-9">
+                                        @foreach($user->roles as $role)
+                                            <p class="text-muted mb-0">{{$role->name}}</p>
+                                        @endforeach
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="row">
+                                    <div class="col-sm-3">
+                                        <p class="mb-0">Building</p>
+                                    </div>
+                                    <div class="col-sm-9">
+                                        <p class="text-muted mb-0">{{$user->building->name}}</p>
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="row">
+                                    <div class="col-sm-3">
+                                        <p class="mb-0">Address</p>
+                                    </div>
+                                    <div class="col-sm-9">
+                                        <p class="text-muted mb-0">{{$user->building->address}}</p>
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="row">
+                                    <div class="col-sm-3">
+                                        <p class="mb-0">Status</p>
+                                    </div>
+                                    <div class="col-sm-9">
+                                        @php
+                                        $status = $user->status;
+                                        @endphp
+                                        @if($status == 1)
+                                            <div class="btn btn-success btn-icon-split btn-lg " style="padding: 0px 7px">Accepted</div>
+                                        @elseif($status == -1)
+                                            <div class="btn btn-danger btn-icon-split btn-lg " style="padding: 0px 7px">Rejected</div>
+                                        @else
+                                            <div class="btn btn-warning btn-icon-split btn-lg " style="padding: 0px 7px">Pending</div>
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div class="form-row d-none" >
-                        <div class="form-group col-md-6">
-                            <label for="exampleFormControlSelect1">Reset Password: <span class="btn btn-info btn-icon-split">123456789</span> </label>
-                            <select name="reset_password" class="form-control" id="exampleFormControlSelect1">
-                                <option value="1">Yes</option>
-                                <option value="0" selected>No</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="d-flex">
-
-                        <button type="submit" class="d-none btn-save btn btn-success"> Save</button>
-
-                        <div  class="btn btn-success edit-profile">Edit Profile</div>
-                    </div>
-
-                </form>
-            </div>
-        </div>
-
+                </div>
+{{--        </section>--}}
     </div>
 
 @endsection
