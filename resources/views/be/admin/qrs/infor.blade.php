@@ -51,6 +51,21 @@
 <body>
 <div class="container">
     <div class="card" style="width: 18rem;">
+
+        @if($checkDate != 100)
+
+            @if($checkDate == 0)
+
+                <div class="alert alert-danger" role="alert">
+                    This Qr Code has expired
+                </div>
+            @else
+                <div class="alert alert-success" role="alert">
+                    This Qr Code has an expiry date until {{$formattedDate}}
+                </div>
+            @endif
+        @endif
+
         <div class="card-img-top d-flex justify-content-center align-items-center" style="width: 250px;height: 250px;background-color: #3685ff"  >
             {!! QrCode::color(255, 255, 255)->backgroundColor(54, 133, 255)->size(200)->generate(route('qr.infor',['qr_id'=>$qr->id])); !!}
 

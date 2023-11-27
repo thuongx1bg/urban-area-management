@@ -42,7 +42,7 @@ class PermissionSeeder extends Seeder
             ['name'=>'Create Roles','display_name'=>'Create Roles','parent_id'=>17,'key_code'=>'create_role'],
             ['name'=>'Update Roles','display_name'=>'Update Roles','parent_id'=>17,'key_code'=>'update_role'],
             ['name'=>'Delete Roles','display_name'=>'Delete Roles','parent_id'=>17,'key_code'=>'delete_role'],
-            // id next is 22,
+
         ]);
     }
 }

@@ -55,6 +55,8 @@ Route::prefix('roles')->group(function () {
 Route::prefix('users')->group(function () {
     Route::get('/', [\App\Http\Controllers\Be\UserController::class, 'index'])
         ->name('user.index')->middleware('can:list_user');
+    Route::get('/building/{building_id}', [\App\Http\Controllers\Be\UserController::class, 'userBuilding'])
+        ->name('user.building.index')->middleware('can:list_user');
     Route::get('/create', [\App\Http\Controllers\Be\UserController::class, 'create'])
         ->name('user.create')->middleware('can:create_user');
     Route::post('/store', [\App\Http\Controllers\Be\UserController::class, 'store'])
@@ -71,6 +73,8 @@ Route::prefix('users')->group(function () {
         ->name('user.change_password');
     Route::post('update_password/{id}', [\App\Http\Controllers\Be\UserController::class, 'updatePassword'])
         ->name('user.update_password');
+    Route::get('/accept/{id}/{status}', [\App\Http\Controllers\Be\UserController::class, 'accept'])
+        ->name('user.accept')->middleware('can:update_user');
 });
 
 Route::prefix('qr-code')->group(function () {
@@ -95,5 +99,13 @@ Route::prefix('qr-code')->group(function () {
     Route::get('/checkForm', [\App\Http\Controllers\Be\QrController::class, 'checkForm'])
         ->name('qr.checkForm')->middleware('can:check_qrcode');
 
+
+});
+
+Route::prefix('notifications')->group(function () {
+    Route::get('/', [\App\Http\Controllers\Be\SendNotification::class, 'index'])
+        ->name('notification.index')->middleware('can:list_notification');;
+    Route::get('/{id}', [\App\Http\Controllers\Be\SendNotification::class, 'detail'])
+        ->name('notification.detail')->middleware('can:update_notification');;
 
 });

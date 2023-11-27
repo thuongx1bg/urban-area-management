@@ -4,19 +4,12 @@
 @endsection
 @section('css')
     <link href="https://cdn.datatables.net/1.11.4/css/dataTables.bootstrap5.min.css" rel="stylesheet">
-    <style>
-        @media screen and (max-width: 600px) {
-            .th-email, .th-house, .th-username, .th-status{
-                display: none;
-            }
-        }
-    </style>
 @endsection
 @section('content')
     <div class="container-fluid">
 
         <!-- Page Heading -->
-        @include('be.partials.content-header',['title'=>'Users','route'=>route('user.create')])
+        @include('be.partials.content-header',['title'=>'Users '.$building->name,'route'=>route('user.create')])
         @if (session('error'))
             <div class="alert alert-danger" role="alert">
                 {{ session('error') }}
@@ -31,7 +24,7 @@
         <!-- Content Row -->
         <div class="card shadow mb-4">
             <div class="card-header py-3">
-                <h6 class="m-0 font-weight-bold text-primary">List Users</h6>
+                <h6 class="m-0 font-weight-bold text-primary">List Users in {{$building->name}}</h6>
             </div>
             <div class="card-body">
                 <div class="table-responsive">
@@ -41,13 +34,13 @@
 
                     <tr>
 
-                        <th class="th-no">No</th>
+                        <th>No</th>
 
                         <th>Name</th>
-                        <th class="th-username">UserName</th>
-                        <th class="th-email">Email</th>
-                        <th class="th-house">House</th>
-                        <th class="th-status">Status</th>
+                        <th>UserName</th>
+                        <th>Email</th>
+                        <th>Building</th>
+                        <th>Status</th>
 
 
 
@@ -91,16 +84,16 @@
 
                 serverSide: true,
 
-                ajax: "{{ route('user.index') }}",
+                ajax: "{{ route('user.building.index',['building_id'=>$building->id]) }}",
 
                 columns: [
 
-                    {class:"th-no",data: 'id', name: 'id'},
+                    {data: 'id', name: 'id'},
                     {data: 'name', name: 'name'},
-                    {class: "th-username",data: 'username', name: 'username'},
-                    {class: 'th-email',data:'email', name: 'email'},
-                    {class: 'th-house',data: 'building', name: 'building'},
-                    {class: 'th-status',data: 'status', name: 'status'},
+                    {data: 'username', name: 'username'},
+                    {data: 'email', name: 'email'},
+                    {data: 'building', name: 'building'},
+                    {data: 'status', name: 'status'},
                     {data: 'action', name: 'action', orderable: true, searchable: true},
 
                 ]

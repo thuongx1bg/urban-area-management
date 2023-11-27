@@ -99,7 +99,7 @@ abstract class BaseRepository implements RepositoryInterface
     public function find($id)
     {
         $user = $this->model->find($id);
-        if(!$user) abort(404);
+//        if(!$user) abort(404);
         return $user;
 
     }

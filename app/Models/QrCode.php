@@ -9,6 +9,6 @@ class QrCode extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'ds','user_id','name','note','si','own_id'
+        'ds','user_id','name','note','si','own_id','phone','gender','date'
     ];
 }

@@ -27,6 +27,10 @@ class User extends Authenticatable
         'status',
         'cmt',
         'public_key', 'private_key',
+        'gender',
+        'image',
+        'date',
+        'own_id'
     ];
 
     /**
@@ -72,5 +76,11 @@ class User extends Authenticatable
         // b1 laasy cac quyen user dang login
 
         // b2 so sanh gia tri dua vao router hien tai cos ton tai trong cac quyfn lay ko
+    }
+
+    public function scopeGetOwnOfHouse($query,$building_id)
+    {
+//        $building_id = $this->model->building_id;
+        return $query->where('building_id',$building_id)->where('own_id',0)->first();
     }
 }

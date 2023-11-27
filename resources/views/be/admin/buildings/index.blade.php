@@ -9,7 +9,7 @@
     <div class="container-fluid">
 
         <!-- Page Heading -->
-        @include('be.partials.content-header',['title'=>'Buildings','route'=>route('building.create')])
+        @include('be.partials.content-header',['title'=>'Houses','route'=>route('building.create')])
         @if (session('error'))
             <div class="alert alert-danger" role="alert">
                 {{ session('error') }}
@@ -24,7 +24,7 @@
         <!-- Content Row -->
         <div class="card shadow mb-4">
             <div class="card-header py-3">
-                <h6 class="m-0 font-weight-bold text-primary">List Buildings</h6>
+                <h6 class="m-0 font-weight-bold text-primary">List Houses</h6>
             </div>
             <div class="card-body">
                 <div class="table-responsive">
@@ -38,6 +38,7 @@
 
                             <th>Name</th>
                             <th>Address</th>
+                            <th>Users</th>
 
                             <th width="100px">Action</th>
 
@@ -85,6 +86,7 @@
                     {data: 'id', name: 'id'},
                     {data: 'name', name: 'name'},
                     {data: 'address', name: 'address'},
+                    {data: 'link', name: 'link'},
                     {data: 'action', name: 'action', orderable: true, searchable: true},
 
                 ]

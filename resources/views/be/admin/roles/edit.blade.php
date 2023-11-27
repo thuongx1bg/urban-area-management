@@ -23,8 +23,10 @@
             </div>
             <div class="card-body">
                 @php
-                    $isAdmin = $role->id == 1 ? true : false;
+
+                    $isAdmin = ( $role->id == 1 ||   $role->id  == 2 ) ? true : false;
                  @endphp
+
                 <form  enctype="multipart/form-data"  method="post" action="{{route('role.update',['id'=>$role->id])}}">
                     @csrf
                     <div class="form-row">

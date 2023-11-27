@@ -4,8 +4,11 @@ namespace App\Http\Controllers\Be;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UserRequest;
+use App\Jobs\SendEmail;
+use App\Models\Notification;
 use App\Models\QrCode;
 use App\Models\User;
+use App\Notifications\TestNotification;
 use App\Repositories\Building\BuildingRepositoryInterface;
 use App\Repositories\QrCode\QrCodeRepositoryInterface;
 use App\Repositories\Role\RoleRepositoryInterface;
@@ -16,6 +19,8 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
@@ -23,7 +28,7 @@ use Illuminate\Support\Facades\Validator;
 use Spatie\Crypto\Rsa\KeyPair;
 
 use Yajra\DataTables\DataTables;
-
+use Pusher\Pusher;
 class UserController extends Controller
 {
 
@@ -34,6 +39,7 @@ class UserController extends Controller
     public $roleRepo;
     public function __construct(UserRepositoryInterface $userRepo, BuildingRepositoryInterface $buildingRepo, RoleRepositoryInterface $roleRepo, QrCodeRepositoryInterface $qrCodeRepo)
     {
+        $this->middleware('auth');
         $this->userRepo = $userRepo;
         $this->buildingRepo = $buildingRepo;
         $this->roleRepo = $roleRepo;
@@ -51,34 +57,69 @@ class UserController extends Controller
     {
         if ($request->ajax()) {
 
-            $data = $this->userRepo->getAll();
+            $user = Auth::user();
+            // chủ nhà thấy được những user trong cùng building còn thành viên chỉ thấy mình
+            if ($user->roles[0]->id == 2  ){
+                if($user->own_id == 0){
+                    $data = User::where('building_id',$user->building_id)->get();
+                }
+                else{
+                    $data = User::where('id',$user->id)->get();
+                }
+            }else{
+                $data = $this->userRepo->getAll();
+            }
 
-            return DataTables::of($data)
-
-                ->addIndexColumn()
-                ->addColumn('building',function ($row){
-                    return $row->building->name;
-                })
-                ->addColumn('status',function ($row){
-                    if($row->status == 1){
-                        return '<div class="btn btn-success btn-icon-split btn-lg " style="padding: 0px 7px">Accepted</div>';
-                    }elseif ($row->status == -1){
-                        return '<div class="btn btn-danger btn-icon-split btn-lg " style="padding: 0px 7px">Rejected</div>';
-                    }
-                    return '<div class="btn btn-warning btn-icon-split btn-lg " style="padding: 0px 7px">Pending</div>';
-
-                })
-                ->addColumn('action', function($row){
-                    return '<a href="'. route('user.edit',['id'=>$row->id]) .'" class="edit btn btn-info btn-circle"><i class="fas fa-info-circle"></i></a>
-                            <a href="' . route('user.delete', ['id' => $row->id]) . '" class="action_delete delete btn btn-danger btn-circle"><i class="fas fa-trash"></i></a>';
-                })
-
-                ->rawColumns(['action','building','status'])
-
-                ->make(true);
+            return  $this->getUser($data,$user);
 
         }
         return view('be.admin.users.index');
+    }
+
+    public function userBuilding(Request $request, $building_id)
+    {
+        if ($request->ajax()) {
+
+            $data = User::where('building_id',$building_id)->get();
+
+            $user = Auth::user();
+            return  $this->getUser($data,$user);
+
+        }
+        $building = $this->buildingRepo->find($building_id);
+        return view('be.admin.users.indexBuilding',compact('building'));
+    }
+    public function getUser($data,$user=null)
+    {
+        return DataTables::of($data)
+
+            ->addIndexColumn()
+            ->addColumn('building',function ($row){
+                return $row->building->name;
+            })
+            ->addColumn('status',function ($row){
+                if($row->status == 1){
+                    return '<div class="btn btn-success btn-icon-split btn-lg " style="padding: 0px 7px">Accepted</div>';
+                }elseif ($row->status == -1){
+                    return '<div class="btn btn-danger btn-icon-split btn-lg " style="padding: 0px 7px">Rejected</div>';
+                }
+                return '<div class="btn btn-warning btn-icon-split btn-lg " style="padding: 0px 7px">Pending</div>';
+
+            })
+            ->addColumn('action', function($row) use ($user){
+                if ($row->id != 1 && ($row->id != $user->id)) // check admin và chủ tài khoản thì không được xóa
+                {
+                    $action =  '<a href="'. route('user.edit',['id'=>$row->id]) .'" class="edit btn btn-info btn-circle"><i class="fas fa-info-circle"></i></a>
+                            <a href="' . route('user.delete', ['id' => $row->id]) . '" class="action_delete delete btn btn-danger btn-circle"><i class="fas fa-trash"></i></a>';
+                }else{
+                    $action = '<a href="'. route('user.edit',['id'=>$row->id]) .'" class="edit btn btn-info btn-circle"><i class="fas fa-info-circle"></i></a>';
+                }
+                return $action;
+            })
+
+            ->rawColumns(['action','building','status'])
+
+            ->make(true);
     }
 
     /**
@@ -87,12 +128,16 @@ class UserController extends Controller
      */
     public function edit($id)
     {
+        $checkOwn = false;
+        if(Auth::user()->roles[0]->id == 2 ){
+            $checkOwn = true;
+        }
         $user = $this->userRepo->find($id);
         $buildings = $this->buildingRepo->getAll();
         $roles = $this->roleRepo->getAll();
         $roleOfUser=$user->roles;
 
-        return view('be.admin.users.edit',compact('user','buildings','roles','roleOfUser'));
+        return view('be.admin.users.edit',compact('user','buildings','roles','roleOfUser','checkOwn'));
 
     }
 
@@ -104,6 +149,8 @@ class UserController extends Controller
     public function update(Request $request, $id)
     {
         try{
+
+            DB::beginTransaction();
             if ($request->reset_password == 1){
                 $request->merge(["password"=> Hash::make("123456789")]);
             }
@@ -119,14 +166,19 @@ class UserController extends Controller
                     'note'=>$user->building->name,
                     'user_id'=>$user->id,
                     'username'=>$user->username,
+                    'phone'=>$user->phone,
+                    'gender'=>$user->gender,
+                    'date'=>null,
                     'own_id'=> 0
                 ];
 
                 $this->qrCodeRepo->createOrUpdateQrCode($dataQr,$idQr);
             }
 
+            DB::commit();
             return redirect()->route('user.index')->with('success', config('messages.success'));
         }catch(Exception $exception){
+            DB::rollBack();
             Log::error('Message:' . $exception->getMessage() . 'Line' . $exception->getLine());
             return redirect()->route('user.index')->with('error', config('messages.error'));
         }
@@ -138,8 +190,13 @@ class UserController extends Controller
     public function create()
     {
         $buildings = $this->buildingRepo->getAll();
+        // chủ nhà thì chỉ tọa thành viên trong nhà được
+        $checkOwn = false;
+        if(Auth::user()->roles[0]->id == 2 ){
+            $checkOwn = true;
+        }
         $roles = $this->roleRepo->getAll();
-        return view('be.admin.users.create',compact('buildings','roles'));
+        return view('be.admin.users.create',compact('buildings','roles','checkOwn'));
     }
 
     /**
@@ -149,28 +206,49 @@ class UserController extends Controller
     public function store(UserRequest $request)
     {
         try{
+            DB::beginTransaction();
+
 
             [$privateKey, $publicKey] = $this->createKey($request->username);
 
             $request->merge(['password'=>Hash::make("123456789"),'public_key'=>$publicKey,'private_key'=>$privateKey]);
 
+            $userCreate = Auth::user();
+
+
+            if($userCreate->own_id == 0 && $userCreate->roles[0]->id == 2){
+                $request->merge(['own_id' => 1]);
+            }
             $user = $this->userRepo->create($request->all());
+
+
+            // send nofication
+
+            sendNotification($user, $userCreate);
+            //end send notification
 
             $dataQr = [
                 'name'=>$user->name,
                 'note'=>$user->building->name,
                 'user_id'=>$user->id,
                 'username'=>$user->username,
+                'phone'=>$user->phone,
+                'gender'=>$user->gender,
+                'date'=>null,
                 'own_id'=> 0
             ];
             $this->qrCodeRepo->createOrUpdateQrCode($dataQr);
 
+            DB::commit();
             return redirect()->route('user.index')->with('success', config('messages.success'));
         }catch(Exception $exception){
+            DB::rollBack();
             Log::error('Message:' . $exception->getMessage() . 'Line' . $exception->getLine());
             return redirect()->route('user.index')->with('error', config('messages.error'));
         }
     }
+
+
 
     /**
      * @param $username
@@ -235,8 +313,17 @@ class UserController extends Controller
     public function updatePassword(Request $request, $id)
     {
         try{
-            $request->merge(["password"=> Hash::make($request->password)]);
-            $this->userRepo->update($id, $request->all());
+            $user = $this->userRepo->find($id);
+            $validatedData = $request->validate([
+                'old_password' => 'required|min:6',
+                'password' => 'min:6|required_with:password_confirm|same:password_confirm',
+                'password_confirm' => 'min:6',
+                // Other validation rules...
+            ]);
+            if (!Hash::check($request->old_password, $user->password)) {
+                return back()->with('error', 'The specified password does not match the database password');
+            }
+            $user->update(['password'=> Hash::make($request->password)]);
             return redirect()->route('user.index')->with('success', config('messages.success'));
         }catch(Exception $exception){
             Log::error('Message:' . $exception->getMessage() . 'Line' . $exception->getLine());
@@ -245,46 +332,66 @@ class UserController extends Controller
     }
 
 
-    public function registerMobile(Request $request)
+    public function accept($id,$status)
     {
-
-        try{
-
-            [$privateKey, $publicKey] = $this->createKey($request->username);
-
-            $request->merge(['password'=>Hash::make($request->password),'public_key'=>$publicKey,'private_key'=>$privateKey]);
-
-            $user = $this->userRepo->create($request->all());
-            $token = $user->createToken($request->username)->plainTextToken;
-
-            $dataQr = [
-                'name'=>$user->name,
-                'note'=>$user->building->name,
-                'user_id'=>$user->id,
-                'username'=>$user->username,
-                'own_id'=> 0
+        try {
+            $user = User::find($id);
+            $update = $user->update(['status'=> $status]);
+            $ownHouser = $user::query()->getOwnOfHouse($user->building_id);
+            $message = [
+                'type' => 'Change status',
+                'content' => $status == 1 ? "Accepted":"Pending",
             ];
-            $this->qrCodeRepo->createOrUpdateQrCode($dataQr);
-            $rs =  ['status'=>true,'token' => $token, 'user'=>$user];
-
-        }catch(\Exception $exception) {
-            $rs =  ['status'=>false];
-
+            SendEmail::dispatch($message, $ownHouser)->delay(now()->addMinute(1));
+            sendNotification($user,Auth::user(),'Admin change status account');
+            return redirect()->back()->with('success', config('messages.success'));
+        } catch (Exception $exception) {
             Log::error('Message:' . $exception->getMessage() . 'Line' . $exception->getLine());
+            return redirect()->back()->with('error', config('messages.error'));
         }
-        return response()->json($rs);
     }
 
 
-    public function loginMoblie(Request $request)
-    {
-        $user = User::where('username',$request->username)->first();
-        if(Hash::check($request->password,$user->password)){
-            $token = $user->createToken($request->username)->plainTextToken;
-            $rs = ['status'=>true,'token' => $token, 'user'=>$user];
-        }else{
-            $rs = ['status'=>false,'messages' => "Incorrect Password"];
-        }
-        return $rs;
-    }
+//    public function registerMobile(Request $request)
+//    {
+//
+//        try{
+//
+//            [$privateKey, $publicKey] = $this->createKey($request->username);
+//
+//            $request->merge(['password'=>Hash::make($request->password),'public_key'=>$publicKey,'private_key'=>$privateKey]);
+//
+//            $user = $this->userRepo->create($request->all());
+//            $token = $user->createToken($request->username)->plainTextToken;
+//
+//            $dataQr = [
+//                'name'=>$user->name,
+//                'note'=>$user->building->name,
+//                'user_id'=>$user->id,
+//                'username'=>$user->username,
+//                'own_id'=> 0
+//            ];
+//            $this->qrCodeRepo->createOrUpdateQrCode($dataQr);
+//            $rs =  ['status'=>true,'token' => $token, 'user'=>$user];
+//
+//        }catch(\Exception $exception) {
+//            $rs =  ['status'=>false];
+//
+//            Log::error('Message:' . $exception->getMessage() . 'Line' . $exception->getLine());
+//        }
+//        return response()->json($rs);
+//    }
+
+
+//    public function loginMoblie(Request $request)
+//    {
+//        $user = User::where('username',$request->username)->first();
+//        if(Hash::check($request->password,$user->password)){
+//            $token = $user->createToken($request->username)->plainTextToken;
+//            $rs = ['status'=>true,'token' => $token, 'user'=>$user];
+//        }else{
+//            $rs = ['status'=>false,'messages' => "Incorrect Password"];
+//        }
+//        return $rs;
+//    }
 }

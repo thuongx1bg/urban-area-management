@@ -21,6 +21,7 @@
     <!-- Divider -->
     <hr class="sidebar-divider">
 
+    @if( \Illuminate\Support\Facades\Auth::user()->status == 1)
     <!-- Heading -->
 {{--    <div class="sidebar-heading">--}}
 {{--        Interface--}}
@@ -108,7 +109,7 @@
     <li class="nav-item">
         <a class="nav-link" href="{{route('building.index')}}">
             <i class="far fa-building"></i>
-            <span>Buildings</span></a>
+            <span>Houses</span></a>
     </li>
     @endcan
 
@@ -120,21 +121,39 @@
     </li>
     @endcan
 
-    @can('list_user')
     <li class="nav-item">
-        <a class="nav-link" href="{{route('user.index')}}">
+        <a
+           class="nav-link collapsed" data-toggle="collapse" data-target="#collapseUtilities1"
+           aria-expanded="true" aria-controls="collapseUtilities1"
+        >
             <i class="fas fa-users"></i>
             <span>Users</span></a>
+        <div id="collapseUtilities1" class="collapse" aria-labelledby="headingUtilities"
+             data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <h6 class="collapse-header">Action:</h6>
+                <a class="collapse-item" @can('list_user') href="{{route('user.index')}}" @endcan>List User</a>
+               @if(\Illuminate\Support\Facades\Auth::user()->own_id == 0) <a class="collapse-item" @can('create_user') href="{{route('user.create')}}" @endcan>Create User</a> @endif
+            </div>
+        </div>
     </li>
-    @endcan
 
-    @can('list_qrcode')
     <li class="nav-item">
-        <a class="nav-link" href="{{route('qr.index')}}">
+        <a
+           class="nav-link collapsed" data-toggle="collapse" data-target="#collapseUtilities"
+           aria-expanded="true" aria-controls="collapseUtilities">
             <i class="fas fa-qrcode"></i>
             <span>QrCodes</span></a>
+        <div id="collapseUtilities" class="collapse" aria-labelledby="headingUtilities"
+             data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <h6 class="collapse-header">Action:</h6>
+
+                <a class="collapse-item"  @can('list_qrcode') href="{{route('qr.index')}}" @endcan>List QrCode</a>
+                <a class="collapse-item" @can('create_qrcode') href="{{route('qr.create')}}" @endcan>Create QrCode</a>
+            </div>
+        </div>
     </li>
-    @endcan
 
     @can('check_qrcode')
     <li class="nav-item">
@@ -143,7 +162,12 @@
             <span>Check QrCodes</span></a>
     </li>
     @endcan
-
+        <li class="nav-item">
+            <a class="nav-link" href="{{route('notification.index')}}">
+                <i class="fas fa-bell"></i>
+                <span>Notifications</span></a>
+        </li>
+    @endif
     <!-- Divider -->
     <hr class="sidebar-divider d-none d-md-block">
 

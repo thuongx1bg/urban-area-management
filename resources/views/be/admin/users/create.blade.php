@@ -44,52 +44,62 @@
                     </div>
 
                     <div class="form-row">
-                        <div class="form-group col-md-6">
+                        <div  class="form-group col-md-6">
                             <label for="inputEmail4">Phone Number </label>
                             <input value="{{old('phone') }}" name="phone" type="text" class="form-control @error('phone') is-invalid @enderror " id="inputEmail4" placeholder="Phone Number">
                             @error('phone')
                             <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
-                        <div class="form-group col-md-6">
+                        <div class="form-group col-md-3">
                             <label for="inputAddress">Id Card </label>
                             <input value="{{old('cmt') }}" name="cmt" type="text" class="form-control @error('cmt') is-invalid @enderror" id="inputAddress" placeholder="Id Card ">
                             @error('cmt')
                             <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
+                        <div class="form-group col-md-3">
+                            <label for="inputAddress">Date of birth <span class="text-danger">*</span> </label>
+                            <input value="{{old('date') }}" name="date" type="date" class="form-control @error('date') is-invalid @enderror" id="date"/>
+                            @error('date')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+
+                        </div>
                     </div>
                     <div class="form-row">
-                        <div class="form-group col-md-6">
-                            <label for="inputEmail4">Email <span class="text-danger">*</span></label>
+                        <div @if($checkOwn) hidden @endif class="form-group col-md-6">
+                            <label for="inputEmail4">Email </label>
                             <input value="{{old('email') }}" name="email" type="text" class="form-control @error('email') is-invalid @enderror " id="inputEmail4" placeholder="Email">
                             @error('email')
                             <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
-                        <div class="form-group col-md-6">
-                            <label for="exampleFormControlSelect1">Building <span class="text-danger">*</span></label>
-                            <select name="building_id" class="form-control" id="exampleFormControlSelect1">
+                        <div @if($checkOwn) hidden @endif class="form-group col-md-6">
+                            <label for="exampleFormControlSelect1">Houses <span class="text-danger">*</span></label>
+                            <select  name="building_id" class="form-control" id="exampleFormControlSelect1">
                                 @foreach($buildings as $building)
-                                    <option @if($building->id == old('building_id')) selected @endif value="{{$building->id}}">{{$building->name}}</option>
+                                    <option @if($building->id == old('building_id') || $building->id == \Illuminate\Support\Facades\Auth::user()->building_id) selected @endif value="{{$building->id}}">{{$building->name}}</option>
                                 @endforeach
                             </select>
                         </div>
                     </div>
-                    <div class="form-row">
+                    <div @if($checkOwn) hidden @endif class="form-row">
                         <div class="form-group col-md-6">
                             <label for="exampleFormControlSelect1">Status <span class="text-danger">*</span></label>
                             <select name="status" class="form-control" id="exampleFormControlSelect1">
                                 <option selected value="1">Accept</option>
-                                <option value="0" >Pending</option>
+                                <option @if($checkOwn) selected @endif value="0" >Pending</option>
                                 <option value="-1" >Reject</option>
                             </select>
                         </div>
-                        <div class="form-group col-md-6">
+                        <div @if($checkOwn) hidden @endif class="form-group col-md-6">
                             <label for="exampleFormControlSelect1">Roles <span class="text-danger">*</span></label>
-                            <select style="height: 130%" multiple name="role_id[]" class="form-control select-2" id="exampleFormControlSelect1">
+                            <select  style="height: 130%" multiple name="role_id[]" class="form-control select-2" id="exampleFormControlSelect1">
                                 @foreach($roles as $r)
-                                    <option  value="{{$r->id}}">{{$r->name}}</option>
+                                    @if($r->id != 1)
+                                    <option  @if($checkOwn && $r->id == 2) selected @endif value="{{$r->id}}">{{$r->name}}</option>
+                                    @endif
                                 @endforeach
                             </select>
                         </div>
@@ -105,7 +115,7 @@
                         </div>
                         <div class="form-group col-md-3 d-flex">
                             <div class="form-check" style="margin-right: 10px">
-                                <input class="form-check-input" type="radio" value="1" name="gender" id="flexRadioDefault1">
+                                <input checked class="form-check-input" type="radio" value="1" name="gender" id="flexRadioDefault1">
                                 <label class="form-check-label" for="flexRadioDefault1">
                                     Male
                                 </label>
@@ -117,6 +127,7 @@
                                 </label>
                             </div>
                         </div>
+
                         <div class="form-group col-md-3">
                             <label for="exampleFormControlSelect1">Password: <span class="btn btn-info btn-icon-split">123456789</span> </label>
                         </div>
@@ -142,5 +153,10 @@
             var fileName = $(this).val().split("\\").pop();
             $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
         });
+        $('.select-2').on("change", function() {
+            console.log($('.select-2').val());
+        });
+
+
     </script>
 @endsection

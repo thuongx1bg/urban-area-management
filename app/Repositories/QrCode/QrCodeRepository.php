@@ -21,7 +21,7 @@ class QrCodeRepository extends BaseRepository implements QrcodeRepositoryInterfa
         try {
 
             $pathToPrivateKey = storage_path('keys/' . $dataQr['username'] . '/private.txt');
-            $si = ('name:' . $dataQr['name'] . ';note:' . $dataQr['note']);
+            $si = str_replace(' ', '', ('name:' . $dataQr['name'] . ';note:' . $dataQr['note']));
             // chu ky so
             $ds = PrivateKey::fromFile($pathToPrivateKey)->sign($si);
 
@@ -33,6 +33,9 @@ class QrCodeRepository extends BaseRepository implements QrcodeRepositoryInterfa
                     'user_id' => $dataQr['user_id'],
                     'si' =>$si,
                     'own_id'=> $dataQr['own_id'],
+                    'phone'=> $dataQr['phone'],
+                    'gender'=>$dataQr['gender'],
+                    'date'=>$dataQr['date']
                 ]);
             }else{
                 $qr = $this->create([
@@ -41,7 +44,10 @@ class QrCodeRepository extends BaseRepository implements QrcodeRepositoryInterfa
                     'ds' => $ds,
                     'user_id' => $dataQr['user_id'],
                     'si' => $si,
-                    'own_id'=> $dataQr['own_id']
+                    'own_id'=> $dataQr['own_id'],
+                    'phone'=> $dataQr['phone'],
+                    'gender'=>$dataQr['gender'],
+                    'date'=>$dataQr['date']
                 ]);
             }
             return $qr;

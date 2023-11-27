@@ -44,30 +44,20 @@
 
         <!-- Page Heading -->
         @include('be.partials.content-header',['title'=>'QrCodes','route'=>route('user.create')])
-        @if (session('error'))
-            <div class="alert alert-danger" role="alert">
-                {{ session('error') }}
-            </div>
-        @endif
-
-        @if (session('success'))
-            <div class="alert alert-success" role="alert">
-                {{ session('success') }}
-            </div>
-        @endif
         <!-- Content Row -->
         <div class="card shadow mb-4">
             <div class="card-header py-3">
-                <h6 class="m-0 font-weight-bold text-primary">List Buildings</h6>
+                <h6 class="m-0 font-weight-bold text-primary">Result check QrCode</h6>
             </div>
             <div class="card-body">
                 @if($check)
-
-
-                    oke
+                    <div class="alert alert-success" role="alert">
+                        This qr code is valid
+                    </div>
                 @else
-
-                    error
+                    <div class="alert alert-danger" role="alert">
+                        This qr code is not valid
+                    </div>
                 @endif
             </div>
         </div>

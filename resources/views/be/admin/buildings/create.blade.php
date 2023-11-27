@@ -1,12 +1,12 @@
 @extends('be.layouts.admin')
 @section('title')
-    <title>Buildings</title>
+    <title>Houses</title>
 @endsection
 @section('content')
     <div class="container-fluid">
 
         <!-- Page Heading -->
-        @include('be.partials.content-header',['title'=>'Buildings','route'=>route('building.create'),'action'=>'/ create'])
+        @include('be.partials.content-header',['title'=>'Houses','route'=>route('building.create'),'action'=>'/ create'])
 
         <!-- Content Row -->
         <div class="card shadow mb-4">

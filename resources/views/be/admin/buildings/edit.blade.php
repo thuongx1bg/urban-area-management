@@ -6,7 +6,7 @@
     <div class="container-fluid">
 
         <!-- Page Heading -->
-        @include('be.partials.content-header',['title'=>'Buildings', 'action'=>'/ edit'])
+        @include('be.partials.content-header',['title'=>'Houses', 'action'=>'/ edit'])
 
         <!-- Content Row -->
         <div class="card shadow mb-4">

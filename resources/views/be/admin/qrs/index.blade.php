@@ -6,6 +6,9 @@
 @endsection
 @section('css')
     <link href="https://cdn.datatables.net/1.11.4/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+    <style>
+
+    </style>
 @endsection
 @section('content')
     <div class="container-fluid">
@@ -27,27 +30,27 @@
             <div class="card-header py-3 d-flex justify-content-between align-items-center">
                     <h6 class="m-0 font-weight-bold text-primary">List QrCode</h6>
             </div>
+
             <div class="card-body">
-                <div class="table-responsive">
+
+                <div class="table-responsive" >
+
                     <table class="table table-bordered data-table " id="dataTable" width="100%" cellspacing="0"">
 
                     <thead>
 
                     <tr>
 
-                        <th>QrId</th>
+{{--                        <th>QrId</th>--}}
 
-                        <th>Name</th>
-                        <th>Note</th>
-                        <th>Link</th>
-
-{{--                        <th>UserName</th>--}}
-{{--                        <th>Email</th>--}}
-{{--                        <th>Building</th>--}}
+{{--                        <th>Name</th>--}}
+{{--                        <th>Note</th>--}}
+                        <th>QrCode</th>
 
 
 
-                        <th width="100px">Action</th>
+
+{{--                        <th width="100px">Action</th>--}}
 
                     </tr>
 
@@ -90,10 +93,10 @@
 
                 columns: [
 
-                    {data: 'id', name: 'id'},
-                    {data: 'name', name: 'name'},
-                    {data: 'note', name: 'note'},
-                    {data: 'link', name: 'link'},
+                    // {data: 'id', name: 'id'},
+                    // {data: 'name', name: 'name'},
+                    // {data: 'note', name: 'note'},
+                    // {data: 'link', name: 'link'},
 
                     {data: 'action', name: 'action', orderable: true, searchable: true},
 

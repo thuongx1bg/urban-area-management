@@ -8,7 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="">
-    <link rel="icon" href="https://static.thenounproject.com/png/3503944-200.png" type="image/gif" >
+    <link rel="icon" href="https://static.thenounproject.com/png/3503944-200.png" type="image/gif">
     @yield('title')
     <!-- Custom fonts for this template-->
     <link href="{{asset('template-admin/vendor/fontawesome-free/css/all.min.css')}}" rel="stylesheet" type="text/css">
@@ -19,10 +19,6 @@
     <!-- Custom styles for this template-->
     <link href="{{asset('template-admin/css/sb-admin-2.min.css')}}" rel="stylesheet">
     @yield('css')
-
-
-
-
 
 
 </head>
@@ -93,7 +89,7 @@
     </div>
 </div>
 <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
-                                            @csrf
+    @csrf
 </form>
 <!-- Bootstrap core JavaScript-->
 <script src="{{asset('template-admin/vendor/jquery/jquery.min.js')}}"></script>
@@ -113,7 +109,48 @@
 <script src="{{asset('template-admin/js/demo/chart-pie-demo.js')}}"></script>
 <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
 
-<script src="{{asset('vendor/sweetalert2/sweetalert2@11.js')}}" ></script>
+<script src="{{asset('vendor/sweetalert2/sweetalert2@11.js')}}"></script>
+<script src="https://js.pusher.com/4.4/pusher.min.js"></script>
+
+<script type="text/javascript">
+    var pusher = new Pusher('{{ env('PUSHER_APP_KEY') }}', {
+        encrypted: true,
+        cluster: "ap1"
+    });
+    var channel = pusher.subscribe('NotificationEvent');
+    channel.bind('send-message', function (data) {
+        var canUpdateNotification = @json(auth()->user()->can('update_notification'));
+        var checkAdmin = @json(auth()->user()->roles[0]->id );
+        var idUser =  @json(auth()->user()->id );
+        var checkCan = "";
+        if(canUpdateNotification){
+             checkCan += '123';
+        }
+        var newNotificationHtml = `
+         <a class="dropdown-item d-flex align-items-center" href="`+checkCan+`">
+                            <div class="mr-3">
+                                <div class="icon-circle bg-primary">
+                                    <i class="fas fa-info-circle text-white"></i>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="small text-gray-500">${data.name}</div>
+                                <span class="font-weight-bold">${data.notification}</span>
+                            </div>
+          </a>
+        `;
+
+        if(checkAdmin != data.role ){
+            if(checkAdmin == 2 && idUser == data.user_id)
+            {
+                $('.menu-notification').prepend(newNotificationHtml);
+            }else if(checkAdmin != 2){
+                $('.menu-notification').prepend(newNotificationHtml);
+            }
+        }
+
+    });
+</script>
 
 @yield('js')
 </body>

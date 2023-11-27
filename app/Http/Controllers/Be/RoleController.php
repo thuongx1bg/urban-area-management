@@ -17,6 +17,7 @@ class RoleController extends Controller
 
     public function __construct(\App\Repositories\Role\RoleRepositoryInterface $roleRepo, Permissions $permissionModel)
     {
+        $this->middleware('auth');
         $this->roleRepo = $roleRepo;
         $this->permissionModel = $permissionModel;
 
@@ -32,7 +33,7 @@ class RoleController extends Controller
                 ->addIndexColumn()
                 ->addColumn('action', function ($row) {
 
-                    if ($row->id != 1) // check admin
+                    if ($row->id != 1 && $row->id !=2) // check admin
                     {
                         $action = '<a href="' . route('role.edit', ['id' => $row->id]) . '" class="edit btn btn-info btn-circle"><i class="fas fa-info-circle"></i></a>
                             <a href="' . route('role.delete', ['id' => $row->id]) . '" class="action_delete delete btn btn-danger btn-circle"><i class="fas fa-trash"></i></a>';

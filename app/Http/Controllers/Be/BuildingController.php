@@ -15,6 +15,7 @@ class BuildingController extends Controller
 
     public function __construct(BuildingRepositoryInterface $buildingRepo)
     {
+        $this->middleware('auth');
         $this->buildingRepo = $buildingRepo;
     }
 
@@ -30,7 +31,10 @@ class BuildingController extends Controller
                     return '<a href="' . route('building.edit', ['id' => $row->id]) . '" class="edit btn btn-info btn-circle"><i class="fas fa-info-circle"></i></a>
                             <a href="' . route('building.delete', ['id' => $row->id]) . '" class="action_delete delete btn btn-danger btn-circle"><i class="fas fa-trash"></i></a>';
                 })
-                ->rawColumns(['action'])
+                ->addColumn('link', function ($row) {
+                    return '<a target="__blank" href="' . route('user.building.index',['building_id'=> $row->id]) . '" class="btn btn-warning btn-icon-split btn-lg " style="padding: 0px 7px">Link</a>';
+                })
+                ->rawColumns(['action','link'])
                 ->make(true);
 
         }
