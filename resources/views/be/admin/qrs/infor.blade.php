@@ -67,7 +67,7 @@
         @endif
 
         <div class="card-img-top d-flex justify-content-center align-items-center" style="width: 250px;height: 250px;background-color: #3685ff"  >
-            {!! QrCode::color(255, 255, 255)->backgroundColor(54, 133, 255)->size(200)->generate(route('qr.infor',['qr_id'=>$qr->id])); !!}
+            {!! QrCode::color(255, 255, 255)->backgroundColor(54, 133, 255)->size(200)->generate($qr->ds.'thuongid:'.$qr->id); !!}
 
         </div>
         <div class="card-body">

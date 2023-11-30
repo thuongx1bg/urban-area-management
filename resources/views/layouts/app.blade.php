@@ -7,7 +7,8 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'Laravel') }}</title>
+    <title> Urban-area-management </title>
+    <link rel="icon" href="https://static.thenounproject.com/png/3503944-200.png" type="image/gif">
 
     <!-- Fonts -->
     <!-- Custom fonts for this template-->
@@ -19,7 +20,6 @@
     <!-- Custom styles for this template-->
     <link href="{{asset('template-admin/css/sb-admin-2.min.css')}}" rel="stylesheet">
     <!-- Scripts -->
-{{--    @vite(['resources/sass/app.scss', 'resources/js/app.js'])--}}
 </head>
 <body class="bg-gradient-primary">
 {{--    <div id="app">--}}

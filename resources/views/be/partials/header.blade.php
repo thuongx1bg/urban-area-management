@@ -190,7 +190,7 @@
                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <span class="mr-2 d-none d-lg-inline text-gray-600 small">{{\Illuminate\Support\Facades\Auth::user()->name }}</span>
                 <img class="img-profile rounded-circle"
-                     src="img/undraw_profile.svg">
+                     src="{{\Illuminate\Support\Facades\Auth::user()->image ?? "https://scontent.fhan14-4.fna.fbcdn.net/v/t39.30808-6/393792096_3549771741955800_2121998287233348954_n.jpg?_nc_cat=102&ccb=1-7&_nc_sid=5f2048&_nc_ohc=-e3r2zH7ND0AX_JMu6y&_nc_ht=scontent.fhan14-4.fna&oh=00_AfC1QZ3nTaTK7-Bwt52z4qWHqbsFe_U0RNLm6_C2BZNltg&oe=6568FA71"}}">
             </a>
             <!-- Dropdown - User Information -->
             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"

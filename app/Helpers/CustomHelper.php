@@ -1,7 +1,9 @@
 <?php
 
 use App\Notifications\TestNotification;
+use Illuminate\Support\Facades\File;
 use Pusher\Pusher;
+use Spatie\Crypto\Rsa\KeyPair;
 
 if (!function_exists('customFunction')) {
     function customFunction($value) {
@@ -36,5 +38,24 @@ if (!function_exists('sendNotification')) {
         );
 
         $pusher->trigger('NotificationEvent', 'send-message', $data);
+    }
+}
+
+if (!function_exists('createKey')) {
+     function createKey($username)
+    {
+        $pathToPrivateKey = ("keys/" . $username);
+        $pathToPublicKey = ("keys/" . $username);
+
+        if (!File::exists(storage_path($pathToPrivateKey))) {
+            File::makeDirectory(storage_path($pathToPrivateKey), 0775, true);
+        }
+        if (!File::exists(storage_path($pathToPublicKey))) {
+            File::makeDirectory(storage_path($pathToPublicKey), 0775, true);
+        }
+
+        [$privateKey, $publicKey] = (new KeyPair())->generate(storage_path($pathToPrivateKey . "/private.txt"), storage_path($pathToPublicKey . "/public.txt"));
+
+        return [$privateKey, $publicKey];
     }
 }

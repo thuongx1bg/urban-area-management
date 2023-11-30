@@ -6,10 +6,14 @@
     <link href="https://cdn.datatables.net/1.11.4/css/dataTables.bootstrap5.min.css" rel="stylesheet">
     <style>
         @media screen and (max-width: 600px) {
-            .th-email, .th-house, .th-username, .th-status{
+            .th-email, .th-house, .th-username, .th-status, .th-role{
                 display: none;
             }
+            .th-action{
+                text-align: center;
+            }
         }
+
     </style>
 @endsection
 @section('content')
@@ -45,8 +49,9 @@
 
                         <th>Name</th>
                         <th class="th-username">UserName</th>
-                        <th class="th-email">Email</th>
+{{--                        <th class="th-email">Email</th>--}}
                         <th class="th-house">House</th>
+                        <th class="th-role">Role</th>
                         <th class="th-status">Status</th>
 
 
@@ -98,10 +103,11 @@
                     {class:"th-no",data: 'id', name: 'id'},
                     {data: 'name', name: 'name'},
                     {class: "th-username",data: 'username', name: 'username'},
-                    {class: 'th-email',data:'email', name: 'email'},
+                    // {class: 'th-email',data:'email', name: 'email'},
                     {class: 'th-house',data: 'building', name: 'building'},
+                    {class: 'th-role',data: 'role', name: 'role'},
                     {class: 'th-status',data: 'status', name: 'status'},
-                    {data: 'action', name: 'action', orderable: true, searchable: true},
+                    {class: 'th-action',data: 'action', name: 'action', orderable: true, searchable: true},
 
                 ]
 

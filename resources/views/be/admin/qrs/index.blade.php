@@ -7,7 +7,9 @@
 @section('css')
     <link href="https://cdn.datatables.net/1.11.4/css/dataTables.bootstrap5.min.css" rel="stylesheet">
     <style>
-
+        .th-action{
+            text-align: center;
+        }
     </style>
 @endsection
 @section('content')
@@ -40,18 +42,22 @@
                     <thead>
 
                     <tr>
+                        @if(\Illuminate\Support\Facades\Auth::user()->roles[0]->id != 2)
 
-{{--                        <th>QrId</th>--}}
-
-{{--                        <th>Name</th>--}}
-{{--                        <th>Note</th>--}}
+                        <th>QrId</th>
+                            <th>House</th>
+                        <th>Name</th>
+                        <th>Note</th>
                         <th>QrCode</th>
+                            <th>Date</th>
 
 
 
 
-{{--                        <th width="100px">Action</th>--}}
-
+                        <th width="100px">Action</th>
+                        @else
+                            <th>QrCode</th>
+                        @endif
                     </tr>
 
                     </thead>
@@ -82,6 +88,27 @@
 
         $(document).ready(function() {
 
+            var checkRole = @json(\Illuminate\Support\Facades\Auth::user()->roles[0]->id);
+            if(checkRole != 2){
+                var columns = [
+
+                    {data: 'id', name: 'id'},
+                    {data: 'house', name: 'house'},
+                    {data: 'name', name: 'name'},
+                    {data: 'note', name: 'note'},
+                    {data: 'link', name: 'link'},
+                    {data: 'date', name: 'date'},
+
+                    {data: 'action', name: 'action', orderable: true, searchable: true},
+
+                ];
+            }else {
+                var columns = [
+
+                    {data: 'action', name: 'action', orderable: true, searchable: true},
+
+                ];
+            }
 
             var table = $('.data-table').DataTable({
 
@@ -91,16 +118,7 @@
 
                 ajax: "{{ route('qr.index') }}",
 
-                columns: [
-
-                    // {data: 'id', name: 'id'},
-                    // {data: 'name', name: 'name'},
-                    // {data: 'note', name: 'note'},
-                    // {data: 'link', name: 'link'},
-
-                    {data: 'action', name: 'action', orderable: true, searchable: true},
-
-                ]
+                columns: columns
 
             });
 

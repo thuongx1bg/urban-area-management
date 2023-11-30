@@ -106,6 +106,18 @@ class UserController extends Controller
                 return '<div class="btn btn-warning btn-icon-split btn-lg " style="padding: 0px 7px">Pending</div>';
 
             })
+            ->addColumn('role',function ($row){
+                if ($row->roles[0]->id == 2){
+                    if($row->own_id == 0){
+                        return 'House owner';
+                    }elseif ($row->own_id == 1){
+                        return 'House member';
+                    }
+                }else{
+                    return $row->roles[0]->name;
+                }
+            })
+
             ->addColumn('action', function($row) use ($user){
                 if ($row->id != 1 && ($row->id != $user->id)) // check admin và chủ tài khoản thì không được xóa
                 {
@@ -117,7 +129,7 @@ class UserController extends Controller
                 return $action;
             })
 
-            ->rawColumns(['action','building','status'])
+            ->rawColumns(['action','building','status','role'])
 
             ->make(true);
     }
@@ -209,7 +221,7 @@ class UserController extends Controller
             DB::beginTransaction();
 
 
-            [$privateKey, $publicKey] = $this->createKey($request->username);
+            [$privateKey, $publicKey] = createKey($request->username);
 
             $request->merge(['password'=>Hash::make("123456789"),'public_key'=>$publicKey,'private_key'=>$privateKey]);
 
@@ -250,26 +262,7 @@ class UserController extends Controller
 
 
 
-    /**
-     * @param $username
-     * @return array
-     */
-    public function createKey($username)
-    {
-        $pathToPrivateKey = ("keys/".$username) ;
-        $pathToPublicKey = ("keys/".$username) ;
 
-        if (!File::exists(storage_path($pathToPrivateKey))) {
-            File::makeDirectory(storage_path($pathToPrivateKey), 0775, true);
-        }
-        if (!File::exists(storage_path($pathToPublicKey))) {
-            File::makeDirectory(storage_path($pathToPublicKey), 0775, true);
-        }
-
-        [$privateKey, $publicKey] = (new KeyPair())->generate(storage_path($pathToPrivateKey."/private.txt"), storage_path($pathToPublicKey."/public.txt"));
-
-        return [$privateKey, $publicKey];
-    }
 
     /**
      * @param $id
@@ -277,9 +270,13 @@ class UserController extends Controller
      */
     public function delete($id)
     {
-        $username = $this->userRepo->find($id)->username;
-        unlink(storage_path('keys/'.$username.'/private.txt'));
-        unlink(storage_path('keys/'.$username.'/public.txt'));
+        $user = $this->userRepo->find($id);
+        $username = $user->username;
+//        unlink(storage_path('keys/'.$username.'/private.txt'));
+//        unlink(storage_path('keys/'.$username.'/public.txt'));
+        foreach ($user->qrcodes as $qrCode) {
+            $qrCode->delete();
+        }
         return $this->userRepo->deleteAndShowConfirm($id);
     }
 

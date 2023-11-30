@@ -43,6 +43,18 @@ class PermissionSeeder extends Seeder
             ['name'=>'Update Roles','display_name'=>'Update Roles','parent_id'=>17,'key_code'=>'update_role'],
             ['name'=>'Delete Roles','display_name'=>'Delete Roles','parent_id'=>17,'key_code'=>'delete_role'],
 
+            // Notification
+            ['name'=>'Notifications','display_name'=>'Notifications','parent_id'=>0,'key_code'=>''],
+            ['name'=>'List Notifications','display_name'=>'List Notifications','parent_id'=>22,'key_code'=>'list_notification'],
+            ['name'=>'Create Notifications','display_name'=>'Create Notifications','parent_id'=>22,'key_code'=>'create_notification'],
+            ['name'=>'Update Notifications','display_name'=>'Update Notifications','parent_id'=>22,'key_code'=>'update_notification'],
+            ['name'=>'Delete Notifications','display_name'=>'Delete Notifications','parent_id'=>22,'key_code'=>'delete_notification'],
+
+            // history
+            ['name'=>'History','display_name'=>'History','parent_id'=>0,'key_code'=>''],
+            ['name'=>'History Event','display_name'=>'History Event','parent_id'=>27,'key_code'=>'history_event'],
+
+            //29
         ]);
     }
 }

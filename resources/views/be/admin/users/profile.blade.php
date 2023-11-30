@@ -17,7 +17,7 @@
                                 <h5 class="my-3">{{$user->name}}</h5>
                                 <p class="text-muted mb-1">{{$user->email}}</p>
                                 <p class="text-muted mb-4">{{ $user->building->address }}</p>
-                                <div style="margin-bottom: 30px">{!! QrCode::generate(route('qr.infor',['qr_id'=> $qrId])); !!}</div>
+                                <div style="margin-bottom: 30px">{!! QrCode::size(300)->generate(\App\Models\QrCode::find($qrId)->ds.'thuongid:'.$qrId); !!}</div>
                                 <div class="d-flex justify-content-center mb-2">
                                     <a style="margin-right: 5px" href="{{route('user.edit',['id'=>$user->id])}}" type="button" class="btn btn-primary">Edit Profile</a>
                                     <a href="{{route('user.change_password',['id'=>$user->id])}}" type="button" class="btn btn-outline-primary ms-1">Change Password</a>

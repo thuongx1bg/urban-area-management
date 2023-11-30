@@ -13,14 +13,19 @@ class BuildingSeeder extends Seeder
      */
     public function run(): void
     {
-        for($i =1;$i<=8;$i++){
-            DB::table('buildings')->insert([
-                    ['name'=>'Phòng '.$i.'01 ','address'=>'Phòng '.$i.'01, 420 khương đình, thành xuân, hà nội'],
-                    ['name'=>'Phòng '.$i.'02 ','address'=>'Phòng '.$i.'02, 420 khương đình, thành xuân, hà nội'],
-                    ['name'=>'Phòng '.$i.'03 ','address'=>'Phòng '.$i.'03, 420 khương đình, thành xuân, hà nội'],
-                    ['name'=>'Phòng '.$i.'04 ','address'=>'Phòng '.$i.'04, 420 khương đình, thành xuân, hà nội'],
-            ]);
-        };
+        DB::table('buildings')->insert([
+            ['name'=> "Management",'address'=>'Management'],
+        ]);
+        $buildings = [
+            "Bằng Lăng","Hoa Sữa","Hoa Phượng","Hoa Lan","Hoa Anh Đào"
+        ];
 
+        foreach ($buildings as $building){
+            for($i =1;$i<=100;$i++){
+                DB::table('buildings')->insert([
+                    ['name'=> $building .' - '.$i,'address'=>'nhà số '.$i.' đường '.$building.'.'],
+                ]);
+            };
+        }
     }
 }

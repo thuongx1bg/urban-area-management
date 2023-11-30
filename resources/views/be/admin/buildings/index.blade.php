@@ -4,6 +4,11 @@
 @endsection
 @section('css')
     <link href="https://cdn.datatables.net/1.11.4/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+    <style>
+        .th-action{
+            text-align: center;
+        }
+    </style>
 @endsection
 @section('content')
     <div class="container-fluid">

@@ -105,7 +105,7 @@
 <script src="{{asset('template-admin/vendor/chart.js/Chart.min.js')}}"></script>
 
 <!-- Page level custom scripts -->
-<script src="{{asset('template-admin/js/demo/chart-area-demo.js')}}"></script>
+{{--<script src="{{asset('template-admin/js/demo/chart-area-demo.js')}}"></script>--}}
 <script src="{{asset('template-admin/js/demo/chart-pie-demo.js')}}"></script>
 <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
 

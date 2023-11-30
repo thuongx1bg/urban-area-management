@@ -32,7 +32,7 @@ class BuildingController extends Controller
                             <a href="' . route('building.delete', ['id' => $row->id]) . '" class="action_delete delete btn btn-danger btn-circle"><i class="fas fa-trash"></i></a>';
                 })
                 ->addColumn('link', function ($row) {
-                    return '<a target="__blank" href="' . route('user.building.index',['building_id'=> $row->id]) . '" class="btn btn-warning btn-icon-split btn-lg " style="padding: 0px 7px">Link</a>';
+                    return '<a target="_blank" href="' . route('user.building.index',['building_id'=> $row->id]) . '" class="btn btn-warning btn-icon-split btn-lg " style="padding: 0px 7px">Link</a>';
                 })
                 ->rawColumns(['action','link'])
                 ->make(true);
@@ -88,6 +88,17 @@ class BuildingController extends Controller
      */
     public function delete($id)
     {
+        $building = $this->buildingRepo->find($id);
+
+        foreach ($building->users as $user) {
+            $username = $user->username;
+//            unlink(storage_path('keys/'.$username.'/private.txt'));
+//            unlink(storage_path('keys/'.$username.'/public.txt'));
+            foreach ($user->qrcodes as $qrCode) {
+                $qrCode->delete();
+            }
+            $user->delete();
+        }
         return $this->buildingRepo->deleteAndShowConfirm($id);
     }
 

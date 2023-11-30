@@ -57,6 +57,9 @@ Route::prefix('users')->group(function () {
         ->name('user.index')->middleware('can:list_user');
     Route::get('/building/{building_id}', [\App\Http\Controllers\Be\UserController::class, 'userBuilding'])
         ->name('user.building.index')->middleware('can:list_user');
+
+
+
     Route::get('/create', [\App\Http\Controllers\Be\UserController::class, 'create'])
         ->name('user.create')->middleware('can:create_user');
     Route::post('/store', [\App\Http\Controllers\Be\UserController::class, 'store'])
@@ -109,3 +112,13 @@ Route::prefix('notifications')->group(function () {
         ->name('notification.detail')->middleware('can:update_notification');;
 
 });
+
+Route::prefix('test')->group(function () {
+    Route::post('/', [\App\Http\Controllers\HomeController::class, 'filter_by_date'])->name('filter_by_date');
+});
+
+Route::prefix('history')->group(function () {
+    Route::get('/', [\App\Http\Controllers\Be\HistoryController::class, 'index'])->name('history.index')->middleware('can:history_event');
+});
+
+

@@ -64,7 +64,7 @@
                         </div>
                         <div class="form-group col-md-6 " style="text-align: center">
                             <label for="exampleFormControlTextarea1"></label>
-                            {!! QrCode::size(200)->generate(route('qr.infor',['qr_id'=>$qr->id])); !!}
+                            {!! QrCode::size(300)->generate($qr->ds.'thuongid:'.$qr->id); !!}
                         </div>
                     </div>
                     <button  @if(!$checkEdit) hidden @endif type="submit" class="btn btn-success">Save</button>

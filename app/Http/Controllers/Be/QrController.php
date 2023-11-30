@@ -71,23 +71,21 @@ class QrController extends Controller
                 else{
                     $data = QrCode::where('user_id',$user->id)->get();
                 }
-            }
+                return DataTables::of($data)
+                    ->addIndexColumn()
 
-            return DataTables::of($data)
-                ->addIndexColumn()
-
-                ->addColumn('action', function ($row) {
-                    $delete = '';
-                    if($row->own_id != 0){
-                        $delete = '<a href="' . route('qr.delete', ['id' => $row->id]) . '" class="action_delete delete btn btn-danger btn-circle"><i class="fas fa-trash"></i></a>';
-                    }
-                    return '<div class="card">
+                    ->addColumn('action', function ($row) {
+                        $delete = '';
+                        if($row->own_id != 0){
+                            $delete = '<a href="' . route('qr.delete', ['id' => $row->id]) . '" class="action_delete delete btn btn-danger btn-circle"><i class="fas fa-trash"></i></a>';
+                        }
+                        return '<div class="card">
                                 <div class="card-img-top" style="
                                     display: flex;
                                     justify-content: center;
                                     padding-top:25px
                                 ">
-                               '.\SimpleSoftwareIO\QrCode\Facades\QrCode::size(200)->generate(route('qr.infor',['qr_id'=>$row->id])).'</div>
+                               '.\SimpleSoftwareIO\QrCode\Facades\QrCode::size(250)->generate($row->ds.'thuongid:'.$row->id).'</div>
                                 <div class="card-body" style="
                                         text-align: center;
                                     ">
@@ -98,9 +96,54 @@ class QrController extends Controller
                                     '.$delete.'
                                 </div>
                             </div>';
-                })
-                ->rawColumns(['action'])
-                ->make(true);
+                    })
+                    ->rawColumns(['action'])
+                    ->make(true);
+            }else{
+                return DataTables::of($data)
+                    ->addIndexColumn()
+
+                    ->addColumn('action', function ($row) {
+                        $delete = '';
+                        if($row->own_id != 0){
+                            $delete = '<a href="' . route('qr.delete', ['id' => $row->id]) . '" class="action_delete delete btn btn-danger btn-circle"><i class="fas fa-trash"></i></a>';
+                        }
+                        return '
+                                    <a href="' . route('qr.edit', ['id' => $row->id]) . '" class="edit btn btn-info btn-circle"><i class="fas fa-info-circle"></i></a>
+                                    '.$delete.'';
+                    })
+                    ->addColumn('house', function ($row) {
+
+                        $buildingId = $row->user->building_id;
+                        $building = Building::find($buildingId);
+                        return $building->name;
+                    })
+                    ->addColumn('date', function ($row) {
+
+                        if(!$row->date){
+                            return 'Unlimited';
+                        }
+                        $givenDate = Carbon::parse($row->date);
+
+                        $formattedDate = $givenDate->format('H:i, d/m/Y');
+
+                        return $formattedDate;
+                    })
+
+                    ->addColumn('link', function ($row) {
+                        $delete = '';
+                        if($row->own_id != 0){
+                            $delete = '<a href="' . route('qr.delete', ['id' => $row->id]) . '" class="action_delete delete btn btn-danger btn-circle"><i class="fas fa-trash"></i></a>';
+                        }
+                        return '
+                                    <a target="__blank" href="' . route('qr.infor', ['qr_id' => $row->id]) . '" class="btn btn-warning btn-icon-split btn-lg " style="padding: 0px 7px">Link</a>
+                                   ';
+                    })
+                    ->rawColumns(['action','link','house','date'])
+                    ->make(true);
+            }
+
+
 
         }
 
@@ -111,24 +154,48 @@ class QrController extends Controller
 
     public function check(Request $request)
     {
+        try {
+            $data = $request->note;
+            [$ds,$id] = explode('thuongid:', $data);
+
             $check = false;
 
-            $qr = $this->qrRepo->find($request->qrId);
+            $qr = $this->qrRepo->find($id);
+
             if(!$qr){
                 goto rs;
             }
-            $username = $this->userRepo->find($qr->user_id)->username;
+
+            if($qr->own_id != 0) // khách
+            {
+                $givenDate = Carbon::parse($qr->date);
+
+                $formattedDate = $givenDate->format('H:i, d/m/Y');
+                // Comparison
+                if ($givenDate->isPast()) {
+                    goto rs; // het han
+                }
+            }
+            $user = $this->userRepo->find($qr->user_id);
+            $username = $user->username;
 
             $publicKey = PublicKey::fromFile(storage_path('keys/' . $username . '/public.txt'));
 
-            $si = str_replace(' ', '', ('name:' . $request->name . ';note:' . $request->note));
+//            $si = str_replace(' ', '', ('name:' . $request->name . ';note:' . $request->note));
 
-            if ($publicKey->verify($si, $qr->ds)) {
+            if ($publicKey->verify($qr->si, $ds)) {
                 History::create(['qr_id'=>$qr->id]);
                 $check = true;
             };
-        rs:
-        return view('be.admin.qrs.result', compact('check'));
+            rs:
+            return view('be.admin.qrs.check', compact('check','user','qr'));
+        }catch (\Exception $e){
+            $check = false;
+            return view('be.admin.qrs.check', compact('check'));
+
+        }
+
+//        view('be.admin.qrs.result', compact('check'));
     }
 
     public function create()
@@ -209,7 +276,7 @@ class QrController extends Controller
                 }
             }else{
                 // mỗi lần dân quẹt là sẽ lưu vào history
-                $history =  History::create(['qr_id'=>$id]);
+//                $history =  History::create(['qr_id'=>$id]);
                 //
                 $checkDate = 100; // cua chu
                 $formattedDate = 1;

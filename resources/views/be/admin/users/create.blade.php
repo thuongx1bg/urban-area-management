@@ -123,7 +123,7 @@
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" value="0" name="gender" id="flexRadioDefault2" checked>
                                 <label class="form-check-label" for="flexRadioDefault2">
-                                    Famle
+                                    Female
                                 </label>
                             </div>
                         </div>
