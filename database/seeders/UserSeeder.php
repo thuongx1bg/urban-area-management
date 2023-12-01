@@ -6,6 +6,7 @@ use App\Models\Building;
 use App\Repositories\QrCode\QrCodeRepositoryInterface;
 use App\Repositories\User\UserRepositoryInterface;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Hash;
 use Faker\Factory as Faker;
 class UserSeeder extends Seeder
@@ -23,6 +24,34 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
+        [$privateKey, $publicKey] = createKey("admin");
+
+        $user = $this->userRepo->create([
+            'name' => 'Admin',
+            'email' => 'test@example.com',
+            'username'=>"admin",
+            'password' => bcrypt('123456789'),
+            'status' => 1,
+            'building_id'=> 1,
+            'own_id'=> 0,
+            'private_key'=>$privateKey,
+            'public_key'=>$publicKey
+        ]);
+        $dataQr = [
+            'name'=>$user->name,
+            'note'=>$user->building->name,
+            'user_id'=>$user->id,
+            'username'=>$user->username,
+            'phone'=>$user->phone,
+            'gender'=>$user->gender,
+            'date'=>null,
+            'own_id'=> 0
+        ];
+
+        $this->qrCodeRepo->createOrUpdateQrCode($dataQr);
+
+
+
         $faker = Faker::create();
         $buildings = Building::where('address','!=', 'Management')->get();
         foreach ($buildings as $building){
@@ -55,6 +84,7 @@ class UserSeeder extends Seeder
                     'date'=>null,
                     'own_id'=> 0
                 ];
+
                 $this->qrCodeRepo->createOrUpdateQrCode($dataQr);
             }
         }

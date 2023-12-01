@@ -21,7 +21,7 @@ class BuildingSeeder extends Seeder
         ];
 
         foreach ($buildings as $building){
-            for($i =1;$i<=100;$i++){
+            for($i =1;$i<=60;$i++){
                 DB::table('buildings')->insert([
                     ['name'=> $building .' - '.$i,'address'=>'nhà số '.$i.' đường '.$building.'.'],
                 ]);
