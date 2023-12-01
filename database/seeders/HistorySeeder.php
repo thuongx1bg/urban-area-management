@@ -21,7 +21,7 @@ class HistorySeeder extends Seeder
         for ($i = 0; $i < 2000; $i++) { // Tạo 50 bản ghi, bạn có thể thay đổi số lượng theo ý muốn
 
             History::create([
-                'qr_id' => random_int(1,900), // Thay thế 'other_field' và 'value' với các trường và giá trị thực tế của bạn
+                'qr_id' => random_int(1,500), // Thay thế 'other_field' và 'value' với các trường và giá trị thực tế của bạn
                 'created_at' => now()->subDays(rand(0, 365))->subMinutes(rand(0, 1440)) // Tạo ngẫu nhiên ngày trong khoảng 1 năm qua
             ]);
         }
