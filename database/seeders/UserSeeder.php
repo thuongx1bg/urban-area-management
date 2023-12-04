@@ -33,7 +33,6 @@ class UserSeeder extends Seeder
             'status' => 1,
             'building_id'=> 1,
             'own_id'=> 0,
-            'role_id' => [1],
             'private_key'=>$privateKey,
             'public_key'=>$publicKey
         ]);
