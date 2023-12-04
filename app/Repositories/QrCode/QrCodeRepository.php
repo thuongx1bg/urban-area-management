@@ -8,7 +8,7 @@ use App\Repositories\BaseRepository;
 use Illuminate\Support\Facades\Log;
 use Spatie\Crypto\Rsa\PrivateKey;
 
-class QrCodeRepository extends BaseRepository implements QrcodeRepositoryInterface
+class QrCodeRepository extends BaseRepository implements QrCodeRepositoryInterface
 {
 
     public function getModel()

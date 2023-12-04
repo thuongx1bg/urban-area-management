@@ -6,7 +6,6 @@ use App\Models\Building;
 use App\Repositories\QrCode\QrCodeRepositoryInterface;
 use App\Repositories\User\UserRepositoryInterface;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Hash;
 use Faker\Factory as Faker;
 class UserSeeder extends Seeder
