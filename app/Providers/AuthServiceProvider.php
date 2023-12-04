@@ -33,12 +33,12 @@ class AuthServiceProvider extends ServiceProvider
 
     public function defineGate()
     {
-        $keyCodeOfPermissions = Permissions::where('key_code', '!=', '')->get('key_code')->pluck('key_code');
-        foreach ($keyCodeOfPermissions as $keyCodeOfPermission) {
-            Gate::define($keyCodeOfPermission, function ($user) use ($keyCodeOfPermission) {
-                return $user->checkPermissionAccess($keyCodeOfPermission);
-            });
-        }
+//        $keyCodeOfPermissions = Permissions::where('key_code', '!=', '')->get('key_code')->pluck('key_code');
+//        foreach ($keyCodeOfPermissions as $keyCodeOfPermission) {
+//            Gate::define($keyCodeOfPermission, function ($user) use ($keyCodeOfPermission) {
+//                return $user->checkPermissionAccess($keyCodeOfPermission);
+//            });
+//        }
 
     }
 }
