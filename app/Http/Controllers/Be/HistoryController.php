@@ -22,13 +22,14 @@ class HistoryController extends Controller
 
             $data = History::orderBy('created_at', 'desc')->get();
             if ($request->filled('from_date') && $request->filled('to_date') && $request->filled('building_id')) {
+
                 $startTime = Carbon::createFromFormat('Y/m/d H:i', $request->from_date);
                 $endTime = Carbon::createFromFormat('Y/m/d H:i', $request->to_date);
                 $buildingId = $request->building_id;
                 $data = History::orderBy('created_at', 'desc')->whereBetween('created_at', [$startTime, $endTime])
                     ->when( ($buildingId != 0 ), function ($q) use ($buildingId) {
                         $users = Building::find($buildingId)->users->pluck('id');
-                        $qrId = QrCode::whereIn('user_id',$users)->pluck('id');
+                        $qrId = QrCode::whereIn('user_id',$users)->withTrashed()->pluck('id');
                         return $q->whereIn('qr_id',$qrId);
                     })
                     ->get();
