@@ -28,7 +28,6 @@ class HistoryController extends Controller
                 $buildingId = $request->building_id;
                 $data = History::orderBy('created_at', 'desc')->whereBetween('created_at', [$startTime, $endTime])
                     ->when( ($buildingId != 0 ), function ($q) use ($buildingId) {
-                        dd($buildingId);
                         $users = Building::find($buildingId)->users->pluck('id');
                         $qrId = QrCode::whereIn('user_id',$users)->withTrashed()->pluck('id');
                         return $q->whereIn('qr_id',$qrId);
