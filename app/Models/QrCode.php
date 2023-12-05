@@ -18,4 +18,9 @@ class QrCode extends Model
     {
         return $this->belongsTo(User::class,'user_id');
     }
+
+    public function histories()
+    {
+        return $this->hasMany(History::class,'qr_id','id');
+    }
 }

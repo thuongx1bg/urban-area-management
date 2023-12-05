@@ -318,6 +318,12 @@ class QrController extends Controller
 
     public function delete($id)
     {
+        $qrs = $this->qrRepo->find($id);
+//        unlink(storage_path('keys/'.$username.'/private.txt'));
+//        unlink(storage_path('keys/'.$username.'/public.txt'));
+        foreach ($qrs->histories as $h) {
+            $h->delete();
+        }
         return $this->qrRepo->deleteAndShowConfirm($id);
     }
 }
