@@ -32,7 +32,7 @@ class HistoryController extends Controller
                         $qrId = QrCode::whereIn('user_id',$users)->withTrashed()->pluck('id');
                         return $q->whereIn('qr_id',$qrId);
                     })
-                    ->get();
+                    ->withTrashed()->get();
             }
 
             return DataTables::of($data)
