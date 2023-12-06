@@ -17,6 +17,6 @@ class History extends Model
 
     public function qrCode()
     {
-        return $this->belongsTo(QrCode::class,'qr_id');
+        return $this->belongsTo(QrCode::class,'qr_id')->withTrashed();
     }
 }

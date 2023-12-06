@@ -58,6 +58,10 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Building::class);
     }
+    public function buildingHistory()
+    {
+        return $this->belongsTo(Building::class)->withTrashed();
+    }
 
     public function roles()
     {

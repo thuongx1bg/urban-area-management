@@ -18,6 +18,10 @@ class QrCode extends Model
     {
         return $this->belongsTo(User::class,'user_id');
     }
+    public function userHistory()
+    {
+        return $this->belongsTo(User::class,'user_id')->withTrashed();
+    }
 
     public function histories()
     {

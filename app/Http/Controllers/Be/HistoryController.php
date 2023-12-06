@@ -34,14 +34,13 @@ class HistoryController extends Controller
                     })
                     ->withTrashed()->get();
             }
-
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->addColumn('date', function ($row) {
                     return $row->created_at;
                 })
                 ->addColumn('house', function ($row) {
-                    return $row->qrcode->user->building->name;
+                    return $row->qrcode->user->building->name ?? "";
                 })
                 ->addColumn('name', function ($row) {
                     return $row->qrcode->name;
