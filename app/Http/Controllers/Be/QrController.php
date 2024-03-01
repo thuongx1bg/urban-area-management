@@ -33,29 +33,6 @@ class QrController extends Controller
 
     }
 
-//    public function index(Request $request)
-//    {
-//        if ($request->ajax()) {
-//
-//            $data = $this->qrRepo->getAll();
-//
-//            return DataTables::of($data)
-//                ->addIndexColumn()
-//                ->addColumn('link', function ($row) {
-//                    return '<a target="__blank" href="' . route('qr.infor', ['qr_id' => $row->id]) . '" class="btn btn-warning btn-icon-split btn-lg " style="padding: 0px 7px">Link</a>';
-//                })
-//                ->addColumn('action', function ($row) {
-//                    return '<a href="' . route('qr.edit', ['id' => $row->id]) . '" class="edit btn btn-info btn-circle"><i class="fas fa-info-circle"></i></a>
-//                            <a href="' . route('qr.delete', ['id' => $row->id]) . '" class="action_delete delete btn btn-danger btn-circle"><i class="fas fa-trash"></i></a>';
-//                })
-//                ->rawColumns(['action', 'link'])
-//                ->make(true);
-//
-//        }
-//
-//
-//        return view('be.admin.qrs.index');
-//    }
     public function index(Request $request)
     {
         if ($request->ajax()) {

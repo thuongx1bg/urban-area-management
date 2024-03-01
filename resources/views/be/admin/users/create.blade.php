@@ -107,13 +107,37 @@
                     </div>
                     <div class="form-row">
 
-                        <div class="form-group col-md-6">
+                        <div style="display: none" class="form-group col-md-6">
                             <div class="custom-file">
                                 <input type="file" class="custom-file-input" id="customFile">
                                 <label class="custom-file-label" for="customFile">Choose file</label>
                             </div>
                         </div>
-                        <div class="form-group col-md-3 d-flex">
+
+
+                        <div style="display: none" class="form-group col-md-3">
+                            <label for="exampleFormControlSelect1">Password: <span class="btn btn-info btn-icon-split">123456789</span> </label>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="inputEmail4">New Password <span class="text-danger">*</span></label>
+                            <input  name="password" type="password" class="form-control @error('password') is-invalid @enderror " placeholder="New Password">
+                            @error('password')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="inputAddress">Confirm Password  <span class="text-danger">*</span></label>
+                            <input name="password_confirm" type="password" class="form-control @error('password_confirm') is-invalid @enderror" placeholder="Confirm Password ">
+                            @error('password_confirm')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+
+                    </div>
+
+                    <div>
+                        <div class="form-group col-md-4 d-flex">
                             <div class="form-check" style="margin-right: 10px">
                                 <input checked class="form-check-input" type="radio" value="1" name="gender" id="flexRadioDefault1">
                                 <label class="form-check-label" for="flexRadioDefault1">
@@ -126,10 +150,6 @@
                                     Female
                                 </label>
                             </div>
-                        </div>
-
-                        <div class="form-group col-md-3">
-                            <label for="exampleFormControlSelect1">Password: <span class="btn btn-info btn-icon-split">123456789</span> </label>
                         </div>
                     </div>
 
